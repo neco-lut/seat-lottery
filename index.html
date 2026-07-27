@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>座席決めくじ引き</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --border: #e2e8f0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--card-bg);
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 24px;
+      text-align: center;
+      color: var(--primary);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    textarea, input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus, input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    textarea {
+      height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .result-section {
+      margin-top: 32px;
+      display: none;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .seat-card {
+      background: #f1f5f9;
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .seat-number {
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .member-name {
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🎲 座席決めくじ引き</h1>
+
+    <div class="form-group">
+      <label for="names">参加者の名前（改行またはカンマ区切り）</label>
+      <textarea id="names" placeholder="佐藤&#10;鈴木&#10;高橋&#10;田中"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="seatPrefix">座席の表記スタイル</label>
+      <input type="text" id="seatPrefix" value="席" placeholder="例: 席, 卓, 番">
+    </div>
+
+    <button onclick="drawSeats()">くじを引く！</button>
+
+    <div class="result-section" id="resultSection">
+      <h2>抽選結果</h2>
+      <div class="result-grid" id="resultGrid"></div>
+    </div>
+  </div>
+
+  <script>
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function drawSeats() {
+      const input = document.getElementById('names').value;
+      const prefix = document.getElementById('seatPrefix').value.trim() || '席';
+      
+      // 改行およびカンマで分割し、空白を除去
+      const members = input
+        .split(/[\n,]/)
+        .map(name => name.trim())
+        .filter(name => name.length > 0);
+
+      if (members.length === 0) {
+        alert('参加者の名前を入力してください。');
+        return;
+      }
+
+      // ランダムシャッフル（フィッシャー–イェーツのシャッフル）
+      const shuffled = shuffleArray([...members]);
+
+      const resultGrid = document.getElementById('resultGrid');
+      resultGrid.innerHTML = '';
+
+      shuffled.forEach((name, index) => {
+        const card = document.createElement('div');
+        card.className = 'seat-card';
+        card.innerHTML = `
+          <div class="seat-number">${index + 1}${prefix}</div>
+          <div class="member-name">${name}</div>
+        `;
+        resultGrid.appendChild(card);
+      });
+
+      document.getElementById('resultSection').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
