@@ -345,6 +345,88 @@
       background-color: #475569;
     }
 
+    /* スマブラ風参戦カットイン オーバーレイ */
+    #smashOverlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #0b0b0e;
+      z-index: 9999;
+      overflow: hidden;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .smash-banner {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      transform: translateY(-50%) rotate(-3deg) scale(0);
+      background: linear-gradient(90deg, #111827 0%, #dc2626 50%, #111827 100%);
+      border-top: 5px solid #fde047;
+      border-bottom: 5px solid #fde047;
+      padding: 30px 20px;
+      box-shadow: 0 0 50px rgba(220, 38, 38, 0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    #smashOverlay.active .smash-banner {
+      transform: translateY(-50%) rotate(-3deg) scale(1);
+      opacity: 1;
+    }
+
+    .smash-tagline {
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: #fde047;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 4px #000;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .smash-name {
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow: 4px 4px 0px #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .smash-seat-badge {
+      background-color: #ffffff;
+      color: #1e1b4b;
+      font-size: 1.4rem;
+      font-weight: 900;
+      padding: 8px 24px;
+      border-radius: 40px;
+      border: 3px solid #000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .smash-hint {
+      position: absolute;
+      bottom: 30px;
+      width: 100%;
+      text-align: center;
+      color: #a1a1aa;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+    }
+
     @keyframes popIn {
       0% { transform: scale(0.8); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
@@ -396,39 +478,54 @@
     </div>
   </div>
 
+  <!-- スマブラ風参戦演出オーバーレイ -->
+  <div id="smashOverlay" onclick="closeSmashOverlay()">
+    <div class="smash-banner">
+      <div class="smash-tagline" id="smashTagline">伝説のチャレンジャー</div>
+      <div class="smash-name" id="smashName">佐藤 参戦！！</div>
+      <div class="smash-seat-badge" id="smashSeat">🪑 A卓-1</div>
+    </div>
+    <div class="smash-hint">画面をタップして閉じる</div>
+  </div>
+
   <script>
     const MAX_ROWS = 20;
 
-    // 動物カード用テンプレートデータ（ランダム割り当て）
+    // 公序良俗を守ったかっこいいキャッチコピー 50選
+    const TAGLINES = [
+      "疾風怒濤の戦略家", "静かなる情熱家", "盤上の支配者", "不屈のチャレンジャー", "勝利を呼び込む男",
+      "神速のフットワーク", "笑顔を届けるムードメーカー", "覚醒せしエース", "漆黒のスタープレイヤー", "可能性の塊",
+      "圧倒的存在感", "光の導き手", "不敗のレジェンド", "未来を照らす希望", "奇跡を呼ぶ男",
+      "冷静沈着な司令塔", "無限のフロンティア", "夢を紡ぐストーリーテラー", "閃光のイノベーター", "真実を射抜く眼光",
+      "不屈のフロンティア精神", "宴のマスターピース", "勝利の女神に愛された者", "自由を愛する冒険者", "驚異の集中力",
+      "天衣無縫のムーブメント", "笑顔のファンタジスタ", "盤面のトリックスター", "静寂を破る一撃", "至高のエンターテイナー",
+      "意志を継ぐ者", "真心のスペシャリスト", "無敵のスマイル", "未知なる可能性", "希望のフラッグベアラー",
+      "熱きソウルの保持者", "華麗なるゲームメイカー", "決断のファーストペンギン", "不動のキーマン", "光彩陸離のヒーロー",
+      "百戦錬磨のベテラン", "希望を拓く開拓者", "盤上の魔法使い", "勇猛果敢な志士", "笑顔の奇跡を起こす者",
+      "時代を創る挑戦者", "常勝無敗のビジョン", "輝きを解き放つ者", "最強のムードメーカー", "栄光への道標"
+    ];
+
     const ANIMAL_POOL = [
-      { icon: '🦁', name: 'ライオン' },
-      { icon: '🐼', name: 'パンダ' },
-      { icon: '🐨', name: 'コアラ' },
-      { icon: '🦊', name: 'キツネ' },
-      { icon: '🐰', name: 'ウサギ' },
-      { icon: '🐯', name: 'トラ' },
-      { icon: '🐻', name: 'クマ' },
-      { icon: 'ペンギン', icon: '🐧', name: 'ペンギン' },
-      { icon: 'ハムスター', icon: '🐹', name: 'ハムスター' },
-      { icon: 'ネコ', icon: '🐱', name: 'ネコ' },
-      { icon: 'イヌ', icon: '🐶', name: 'イヌ' },
-      { icon: 'サル', icon: '🐵', name: 'サル' },
-      { icon: 'リス', icon: '🐿️', name: 'リス' },
-      { icon: 'ゾウ', icon: '🐘', name: 'ゾウ' },
-      { icon: 'キリン', icon: '🦒', name: 'キリン' },
-      { icon: 'アルパカ', icon: '🦙', name: 'アルパカ' },
-      { icon: 'フクロウ', icon: '🦉', name: 'フクロウ' },
-      { icon: 'カワウソ', icon: '🦦', name: 'カワウソ' },
-      { icon: 'ヒヨコ', icon: '🐤', name: 'ヒヨコ' },
-      { icon: 'カエル', icon: '🐸', name: 'カエル' }
+      { icon: '🦁', name: 'ライオン' }, { icon: '🐼', name: 'パンダ' },
+      { icon: '🐨', name: 'コアラ' },   { icon: '🦊', name: 'キツネ' },
+      { icon: '🐰', name: 'ウサギ' },   { icon: '🐯', name: 'トラ' },
+      { icon: '🐻', name: 'クマ' },     { icon: '🐧', name: 'ペンギン' },
+      { icon: '🐹', name: 'ハムスター' },{ icon: '🐱', name: 'ネコ' },
+      { icon: '🐶', name: 'イヌ' },     { icon: '🐵', name: 'サル' },
+      { icon: '🐿️', name: 'リス' },     { icon: '🐘', name: 'ゾウ' },
+      { icon: '🦒', name: 'キリン' },   { icon: '🦙', name: 'アルパカ' },
+      { icon: '🦉', name: 'フクロウ' }, { icon: '🦦', name: 'カワウソ' },
+      { icon: '🐤', name: 'ヒヨコ' },   { icon: '🐸', name: 'カエル' }
     ];
 
     let lotteryData = {
-      members: [],       // 未選択のメンバーリスト
-      assigned: [],      // 決定済みの結果リスト [{member, seat, animal}]
-      shuffledSeats: [], // シャッフルされた席リスト
+      members: [],
+      assigned: [],
+      shuffledSeats: [],
       selectedMember: null
     };
+
+    let smashTimeout = null;
 
     window.addEventListener('DOMContentLoaded', () => {
       for (let i = 0; i < 4; i++) {
@@ -492,7 +589,6 @@
       document.getElementById('errorBox').style.display = 'none';
     }
 
-    // くじ引きフェーズへの遷移
     function startLottery() {
       hideError();
 
@@ -526,13 +622,11 @@
         return;
       }
 
-      // データ初期化
       lotteryData.members = members;
       lotteryData.shuffledSeats = shuffleArray(seats);
       lotteryData.assigned = [];
       lotteryData.selectedMember = null;
 
-      // 画面切り替え
       document.getElementById('setupPhase').style.display = 'none';
       document.getElementById('lotteryPhase').style.display = 'block';
 
@@ -540,12 +634,10 @@
       renderBoxes(seats.length);
     }
 
-    // 名前チップの描画
     function renderChips() {
       const container = document.getElementById('memberChips');
       container.innerHTML = '';
 
-      // 全メンバーのチップを生成
       const allMembers = [...lotteryData.members, ...lotteryData.assigned.map(a => a.member)];
 
       allMembers.forEach(name => {
@@ -564,14 +656,12 @@
       });
     }
 
-    // メンバー選択
     function selectMember(name) {
       lotteryData.selectedMember = name;
       renderChips();
       updateBoxState();
     }
 
-    // 動物ボックスの描画
     function renderBoxes(count) {
       const grid = document.getElementById('boxGrid');
       grid.innerHTML = '';
@@ -597,7 +687,6 @@
       }
     }
 
-    // ボックスの選択可否状態の更新
     function updateBoxState() {
       const boxes = document.querySelectorAll('.animal-box');
       boxes.forEach(box => {
@@ -611,7 +700,6 @@
       });
     }
 
-    // ボックスを開く（くじを引く）
     function openBox(index) {
       const box = document.getElementById(`box-${index}`);
 
@@ -628,46 +716,73 @@
       const seat = lotteryData.shuffledSeats[lotteryData.assigned.length];
       const animalIcon = box.dataset.animalIcon;
 
-      // 結果を保存
+      // ランダムでキャッチコピーを選択
+      const tagline = TAGLINES[Math.floor(Math.random() * TAGLINES.length)];
+
       lotteryData.assigned.push({ member, seat, animalIcon });
       lotteryData.members = lotteryData.members.filter(m => m !== member);
       lotteryData.selectedMember = null;
 
-      // ボックス見た目更新
       box.classList.remove('disabled');
       box.classList.add('opened');
       box.innerHTML = `
         <div class="box-result">
-          <div class="res-seat">🪑 ${seat}</div>
+          <div class="res-seat">${animalIcon} ${seat}</div>
           <div class="res-member">${member}</div>
         </div>
       `;
 
-      // 派手な紙吹雪クラッカー演出！
-      fireConfetti();
+      // スマブラ風参戦カットインを表示
+      showSmashOverlay(tagline, member, seat, animalIcon);
 
-      // UI更新
       renderChips();
       updateBoxState();
 
-      // 全員終了チェック
       if (lotteryData.members.length === 0) {
         showSummary();
       }
     }
 
-    // クラッカー演出（紙吹雪）
+    // スマブラ風カットインの演出実行
+    function showSmashOverlay(tagline, member, seat, icon) {
+      const overlay = document.getElementById('smashOverlay');
+      document.getElementById('smashTagline').textContent = `〜 ${tagline} 〜`;
+      document.getElementById('smashName').textContent = `${member} 参戦！！`;
+      document.getElementById('smashSeat').textContent = `${icon} ${seat}`;
+
+      overlay.style.display = 'block';
+
+      // アニメーション適用トリガー
+      setTimeout(() => {
+        overlay.classList.add('active');
+        fireConfetti();
+      }, 50);
+
+      // 3.2秒後に自動で閉じる（クリックでも閉じられる）
+      clearTimeout(smashTimeout);
+      smashTimeout = setTimeout(() => {
+        closeSmashOverlay();
+      }, 3200);
+    }
+
+    function closeSmashOverlay() {
+      const overlay = document.getElementById('smashOverlay');
+      overlay.classList.remove('active');
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 300);
+    }
+
     function fireConfetti() {
       if (typeof confetti === 'function') {
         confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.6 }
+          particleCount: 100,
+          spread: 80,
+          origin: { y: 0.5 }
         });
       }
     }
 
-    // 最終一覧表示
     function showSummary() {
       const summarySection = document.getElementById('summarySection');
       const summaryGrid = document.getElementById('summaryGrid');
@@ -685,15 +800,13 @@
 
       summarySection.style.display = 'block';
 
-      // 最終フィナーレの紙吹雪
       setTimeout(() => {
         if (typeof confetti === 'function') {
-          confetti({ particleCount: 150, spread: 100, origin: { y: 0.4 } });
+          confetti({ particleCount: 180, spread: 100, origin: { y: 0.4 } });
         }
-      }, 300);
+      }, 500);
     }
 
-    // 最初からやり直す
     function resetAll() {
       document.getElementById('summarySection').style.display = 'none';
       document.getElementById('lotteryPhase').style.display = 'none';
