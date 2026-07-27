@@ -3,60 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>座席決めくじ引き</title>
+  <title>VIP SEAT LOTTERY - 座席決めくじ引き</title>
   <!-- 紙吹雪演出用ライブラリ -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <!-- HTML要素を画像化してダウンロードするライブラリ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
-      --primary: #4f46e5;
-      --primary-hover: #4338ca;
-      --secondary: #10b981;
-      --secondary-hover: #059669;
-      --danger: #ef4444;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #1e293b;
-      --border: #cbd5e1;
-      --error-bg: #fef2f2;
-      --error-text: #dc2626;
+      --bg-gradient: radial-gradient(circle at center, #111827 0%, #030712 100%);
+      --card-bg: #0f172a;
+      --card-inner: #1e293b;
+      --gold-primary: #f59e0b;
+      --gold-light: #fef08a;
+      --gold-gradient: linear-gradient(135deg, #fef08a 0%, #d97706 50%, #b45309 100%);
+      --gold-border: linear-gradient(135deg, #fde047, #b45309);
+      --red-accent: #ef4444;
+      --text-light: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-dark: #334155;
     }
 
     body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
+      font-family: 'Helvetica Neue', Arial, system-ui, -apple-system, sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-light);
       margin: 0;
       padding: 24px 16px;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
+      align-items: flex-start;
+      box-sizing: border-box;
     }
 
     .container {
       width: 100%;
       max-width: 680px;
-      background: var(--card-bg);
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(217, 119, 6, 0.3);
+      padding: 32px 24px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(217, 119, 6, 0.15);
       box-sizing: border-box;
     }
 
     h1 {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       margin-top: 0;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
       text-align: center;
-      color: var(--primary);
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
     .subtitle {
       text-align: center;
-      color: #64748b;
-      font-size: 0.95rem;
-      margin-top: -12px;
-      margin-bottom: 24px;
+      color: var(--gold-light);
+      font-size: 0.9rem;
+      margin-top: 0;
+      margin-bottom: 28px;
+      letter-spacing: 1px;
+      opacity: 0.9;
     }
 
     /* 入力フェーズのスタイル */
@@ -66,18 +78,18 @@
       align-items: center;
       margin-bottom: 12px;
       font-weight: 600;
-      font-size: 0.9rem;
-      color: #64748b;
+      font-size: 0.85rem;
+      color: var(--gold-light);
     }
 
     .row-header {
       display: grid;
       grid-template-columns: 1fr 1fr 40px;
-      gap: 8px;
+      gap: 10px;
       font-weight: 600;
       font-size: 0.85rem;
-      margin-bottom: 8px;
-      color: #475569;
+      margin-bottom: 10px;
+      color: var(--text-muted);
       padding: 0 4px;
     }
 
@@ -85,7 +97,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       max-height: 45vh;
       overflow-y: auto;
       padding-right: 4px;
@@ -94,32 +106,35 @@
     .input-row {
       display: grid;
       grid-template-columns: 1fr 1fr 40px;
-      gap: 8px;
+      gap: 10px;
       align-items: center;
     }
 
     input[type="text"] {
       width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      padding: 12px 14px;
+      background: var(--card-inner);
+      border: 1px solid var(--border-dark);
+      border-radius: 10px;
+      color: #ffffff;
       box-sizing: border-box;
       font-size: 0.95rem;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
     }
 
     input[type="text"]:focus {
       outline: none;
-      border-color: var(--primary);
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
     }
 
     .btn-remove {
-      background-color: transparent;
-      color: var(--danger);
-      border: 1px solid var(--danger);
-      border-radius: 8px;
-      width: 40px;
-      height: 40px;
+      background: transparent;
+      color: var(--red-accent);
+      border: 1px solid var(--red-accent);
+      border-radius: 10px;
+      width: 42px;
+      height: 42px;
       font-size: 1.2rem;
       cursor: pointer;
       display: flex;
@@ -129,52 +144,58 @@
     }
 
     .btn-remove:hover {
-      background-color: var(--danger);
+      background: var(--red-accent);
       color: white;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
     }
 
     .btn-add {
       width: 100%;
-      background-color: #f1f5f9;
-      color: #334155;
-      border: 2px dashed var(--border);
+      background: rgba(30, 41, 59, 0.6);
+      color: var(--gold-light);
+      border: 1px dashed var(--gold-primary);
       padding: 12px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .btn-add:hover {
-      background-color: #e2e8f0;
+      background: rgba(245, 158, 11, 0.1);
+      border-style: solid;
     }
 
     .btn-submit {
       width: 100%;
-      background-color: var(--primary);
-      color: white;
+      background: var(--gold-gradient);
+      color: #000000;
       border: none;
-      padding: 14px;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
+      padding: 16px;
+      border-radius: 10px;
+      font-size: 1.05rem;
+      font-weight: 800;
       cursor: pointer;
-      transition: background-color 0.2s;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
+      transition: all 0.2s;
     }
 
     .btn-submit:hover {
-      background-color: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
     }
 
     .error-message {
       display: none;
-      background-color: var(--error-bg);
-      color: var(--error-text);
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--red-accent);
+      color: #fca5a5;
       padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
       font-size: 0.9rem;
       text-align: center;
     }
@@ -185,46 +206,49 @@
     }
 
     .section-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #475569;
-      margin-bottom: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      margin-bottom: 12px;
+      letter-spacing: 1px;
     }
 
     .member-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 24px;
+      gap: 10px;
+      margin-bottom: 28px;
     }
 
     .chip {
-      padding: 8px 16px;
-      background: #f1f5f9;
-      border: 2px solid var(--border);
-      border-radius: 20px;
+      padding: 10px 18px;
+      background: var(--card-inner);
+      border: 1px solid var(--border-dark);
+      border-radius: 25px;
       font-size: 0.95rem;
       font-weight: 600;
+      color: var(--text-light);
       cursor: pointer;
       transition: all 0.2s;
     }
 
     .chip:hover {
-      border-color: var(--primary);
-      background: #e0e7ff;
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
     }
 
     .chip.selected {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+      background: var(--gold-gradient);
+      color: #000;
+      border-color: var(--gold-light);
+      font-weight: 800;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
     }
 
     .chip.done {
-      background: #e2e8f0;
-      color: #94a3b8;
-      border-color: #cbd5e1;
+      background: #090d16;
+      color: #475569;
+      border-color: #1e293b;
       cursor: not-allowed;
       text-decoration: line-through;
     }
@@ -232,159 +256,189 @@
     .box-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
+      gap: 14px;
+      margin-bottom: 28px;
     }
 
-    .animal-box {
-      aspect-ratio: 1;
-      background: #ffffff;
-      border: 2px solid #e2e8f0;
+    /* カジノスタイル・カードデザイン */
+    .casino-card {
+      aspect-ratio: 0.85;
+      background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid rgba(245, 158, 11, 0.3);
       border-radius: 12px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       user-select: none;
+      position: relative;
+      overflow: hidden;
     }
 
-    .animal-box:hover:not(.opened):not(.disabled) {
-      transform: translateY(-4px);
-      border-color: var(--primary);
-      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.15);
+    .casino-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 12px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(254, 240, 138, 0.4), transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
     }
 
-    .animal-box.disabled {
-      opacity: 0.6;
+    .casino-card:hover:not(.opened):not(.disabled) {
+      transform: translateY(-6px) scale(1.02);
+      border-color: var(--gold-primary);
+      box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+    }
+
+    .casino-card.disabled {
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
-    .animal-box.opened {
-      background: #f0fdf4;
-      border-color: var(--secondary);
+    .casino-card.opened {
+      background: linear-gradient(145deg, #064e3b 0%, #022c22 100%);
+      border-color: #10b981;
       cursor: default;
-      animation: popIn 0.3s ease-out;
+      animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
     }
 
-    .animal-icon {
+    .card-icon {
       font-size: 2.2rem;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
     }
 
-    .animal-name {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #64748b;
+    .card-name {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      letter-spacing: 1px;
     }
 
     .box-result {
       text-align: center;
+      padding: 8px;
     }
 
     .box-result .res-seat {
-      font-size: 1rem;
-      font-weight: bold;
-      color: var(--secondary);
-      margin-bottom: 2px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #34d399;
+      margin-bottom: 4px;
+      text-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
     }
 
     .box-result .res-member {
       font-size: 0.85rem;
-      color: #334155;
+      color: #ffffff;
+      font-weight: 600;
     }
 
     /* 結果一覧画面 */
     #summarySection {
       display: none;
-      margin-top: 32px;
-      padding-top: 24px;
-      border-top: 2px dashed var(--border);
+      margin-top: 36px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(245, 158, 11, 0.3);
     }
 
     .summary-capture-area {
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      margin-bottom: 20px;
+      background: #090d16;
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      margin-bottom: 24px;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
     }
 
     .summary-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
+      gap: 14px;
     }
 
     .summary-card {
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      padding: 12px;
-      border-radius: 8px;
+      background: var(--card-inner);
+      border: 1px solid var(--border-dark);
+      padding: 14px 10px;
+      border-radius: 10px;
       text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
 
     .summary-tagline {
-      font-size: 0.75rem;
-      color: #d97706;
-      font-weight: 700;
-      margin-bottom: 4px;
+      font-size: 0.72rem;
+      color: var(--gold-primary);
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .summary-seat {
-      font-size: 0.85rem;
-      color: var(--primary);
-      font-weight: 600;
+      font-size: 0.9rem;
+      color: #38bdf8;
+      font-weight: 700;
     }
 
     .summary-member {
-      font-size: 1.05rem;
-      font-weight: bold;
-      margin-top: 2px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-top: 4px;
     }
 
     .action-buttons {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
     .btn-download {
-      background-color: var(--secondary);
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: white;
       border: none;
-      padding: 12px;
-      border-radius: 8px;
+      padding: 14px;
+      border-radius: 10px;
       width: 100%;
-      font-size: 0.95rem;
-      font-weight: 600;
+      font-size: 1rem;
+      font-weight: 700;
       cursor: pointer;
-      transition: background-color 0.2s;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s;
     }
 
     .btn-download:hover {
-      background-color: var(--secondary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
     }
 
     .btn-reset {
-      background-color: #64748b;
-      color: white;
-      border: none;
+      background: rgba(51, 65, 85, 0.8);
+      color: var(--text-muted);
+      border: 1px solid var(--border-dark);
       padding: 12px;
-      border-radius: 8px;
+      border-radius: 10px;
       width: 100%;
       font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
+      transition: all 0.2s;
     }
 
     .btn-reset:hover {
-      background-color: #475569;
+      background: #475569;
+      color: #ffffff;
     }
 
     /* スマブラ風参戦カットイン オーバーレイ */
@@ -395,7 +449,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-color: #0b0b0e;
+      background-color: #030712;
       z-index: 9999;
       overflow: hidden;
       cursor: pointer;
@@ -408,11 +462,11 @@
       left: 0;
       width: 100%;
       transform: translateY(-50%) rotate(-3deg) scale(0);
-      background: linear-gradient(90deg, #111827 0%, #dc2626 50%, #111827 100%);
-      border-top: 5px solid #fde047;
-      border-bottom: 5px solid #fde047;
-      padding: 30px 20px;
-      box-shadow: 0 0 50px rgba(220, 38, 38, 0.8);
+      background: linear-gradient(90deg, #090d16 0%, #b45309 30%, #f59e0b 50%, #b45309 70%, #090d16 100%);
+      border-top: 4px solid var(--gold-light);
+      border-bottom: 4px solid var(--gold-light);
+      padding: 32px 20px;
+      box-shadow: 0 0 60px rgba(245, 158, 11, 0.8);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -430,7 +484,7 @@
     .smash-tagline {
       font-size: 1.2rem;
       font-weight: 900;
-      color: #fde047;
+      color: #ffffff;
       letter-spacing: 3px;
       text-transform: uppercase;
       text-shadow: 2px 2px 4px #000;
@@ -441,22 +495,22 @@
     .smash-name {
       font-size: 2.8rem;
       font-weight: 900;
-      color: #ffffff;
+      color: var(--gold-light);
       text-shadow: 4px 4px 0px #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
       letter-spacing: 2px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       text-align: center;
     }
 
     .smash-seat-badge {
       background-color: #ffffff;
-      color: #1e1b4b;
-      font-size: 1.4rem;
+      color: #0f172a;
+      font-size: 1.3rem;
       font-weight: 900;
-      padding: 8px 24px;
+      padding: 8px 28px;
       border-radius: 40px;
       border: 3px solid #000;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
     }
 
     .smash-hint {
@@ -464,7 +518,7 @@
       bottom: 30px;
       width: 100%;
       text-align: center;
-      color: #a1a1aa;
+      color: var(--text-muted);
       font-size: 0.85rem;
       letter-spacing: 1px;
     }
@@ -478,43 +532,44 @@
 <body>
 
   <div class="container">
-    <h1>🎲 座席決めくじ引き</h1>
+    <h1>♠️ VIP SEAT LOTTERY ♣️</h1>
+    <div class="subtitle">カジノスタイルの座席決め抽選</div>
 
     <div id="errorBox" class="error-message"></div>
 
     <!-- フェーズ1: 設定入力画面 -->
     <div id="setupPhase">
       <div class="info-bar">
-        <span>入力項目</span>
+        <span>入力リスト</span>
         <span id="countDisplay">0 / 20枠</span>
       </div>
 
       <div class="row-header">
         <span>参加者名</span>
-        <span>席名 / 席番号</span>
+        <span>指定席 / テーブル</span>
         <span></span>
       </div>
 
       <div class="input-list" id="inputList"></div>
 
-      <button type="button" class="btn-add" id="btnAdd" onclick="addRow()">＋ 入力枠を増やす</button>
-      <button type="button" class="btn-submit" onclick="startLottery()">くじ引きをスタート！</button>
+      <button type="button" class="btn-add" id="btnAdd" onclick="addRow()">＋ プレイヤー枠を追加</button>
+      <button type="button" class="btn-submit" onclick="startLottery()">GAME START - くじ引き開始</button>
     </div>
 
     <!-- フェーズ2: くじ引き実行画面 -->
     <div id="lotteryPhase">
-      <div class="subtitle">自分の名前を選択してから、好きな動物ボックスを押してください</div>
+      <div class="subtitle">プレイヤー名を選択し、運命のカジノカードを選んでください</div>
 
-      <div class="section-title">1. あなたの名前を選択</div>
+      <div class="section-title">1. SELECT PLAYER</div>
       <div class="member-chips" id="memberChips"></div>
 
-      <div class="section-title">2. 動物ボックスを選択</div>
+      <div class="section-title">2. SELECT CARD</div>
       <div class="box-grid" id="boxGrid"></div>
 
       <!-- 全員終了後の結果まとめ -->
       <div id="summarySection">
         <div class="summary-capture-area" id="captureArea">
-          <h1 style="font-size: 1.3rem; margin: 0 0 16px 0; text-align: center;">🎉 最終座席決定一覧</h1>
+          <h1 style="font-size: 1.3rem; margin: 0 0 18px 0; text-align: center;">♦️ FINAL RESULT LIST ♦️</h1>
           <div class="summary-grid" id="summaryGrid"></div>
         </div>
 
@@ -529,9 +584,9 @@
   <!-- スマブラ風参戦演出オーバーレイ -->
   <div id="smashOverlay" onclick="closeSmashOverlay()">
     <div class="smash-banner">
-      <div class="smash-tagline" id="smashTagline">伝説のチャレンジャー</div>
+      <div class="smash-tagline" id="smashTagline">〜 疾風怒濤の戦略家 〜</div>
       <div class="smash-name" id="smashName">佐藤 参戦！！</div>
-      <div class="smash-seat-badge" id="smashSeat">🪑 A卓-1</div>
+      <div class="smash-seat-badge" id="smashSeat">♠️ A卓-1</div>
     </div>
     <div class="smash-hint">画面をタップして閉じる</div>
   </div>
@@ -552,17 +607,18 @@
       "時代を創る挑戦者", "常勝無敗のビジョン", "輝きを解き放つ者", "最強のムードメーカー", "栄光への道標"
     ];
 
-    const ANIMAL_POOL = [
-      { icon: '🦁', name: 'ライオン' }, { icon: '🐼', name: 'パンダ' },
-      { icon: '🐨', name: 'コアラ' },   { icon: '🦊', name: 'キツネ' },
-      { icon: '🐰', name: 'ウサギ' },   { icon: '🐯', name: 'トラ' },
-      { icon: '🐻', name: 'クマ' },     { icon: '🐧', name: 'ペンギン' },
-      { icon: '🐹', name: 'ハムスター' },{ icon: '🐱', name: 'ネコ' },
-      { icon: '🐶', name: 'イヌ' },     { icon: '🐵', name: 'サル' },
-      { icon: '🐿️', name: 'リス' },     { icon: '🐘', name: 'ゾウ' },
-      { icon: '🦒', name: 'キリン' },   { icon: '🦙', name: 'アルパカ' },
-      { icon: '🦉', name: 'フクロウ' }, { icon: '🦦', name: 'カワウソ' },
-      { icon: '🐤', name: 'ヒヨコ' },   { icon: '🐸', name: 'カエル' }
+    // カジノテーマ・モチーフアイコン群
+    const CASINO_POOL = [
+      { icon: '♠️', name: 'SPADE' },    { icon: '♥️', name: 'HEART' },
+      { icon: '♦️', name: 'DIAMOND' },  { icon: '♣️', name: 'CLUB' },
+      { icon: '🎰', name: 'SLOT' },     { icon: '🎲', name: 'DICE' },
+      { icon: '🪙', name: 'COIN' },     { icon: '🃏', name: 'JOKER' },
+      { icon: '👑', name: 'CROWN' },    { icon: '💎', name: 'GEM' },
+      { icon: '🏆', name: 'TROPHY' },   { icon: '🔑', name: 'VIP KEY' },
+      { icon: '🌟', name: 'STAR' },     { icon: '🔥', name: 'FLAME' },
+      { icon: '🎯', name: 'TARGET' },   { icon: '⚡', name: 'LIGHTNING' },
+      { icon: '🍾', name: 'CHAMPAGNE'}, { icon: '🎁', name: 'BOX' },
+      { icon: '⚜️', name: 'HERALD' },   { icon: '🔔', name: 'BELL' }
     ];
 
     let lotteryData = {
@@ -614,7 +670,7 @@
       document.getElementById('countDisplay').textContent = `${count} / ${MAX_ROWS}枠`;
       const btnAdd = document.getElementById('btnAdd');
       btnAdd.disabled = count >= MAX_ROWS;
-      btnAdd.textContent = count >= MAX_ROWS ? '最大件数（20枠）に達しました' : '＋ 入力枠を増やす';
+      btnAdd.textContent = count >= MAX_ROWS ? '最大件数（20枠）に達しました' : '＋ プレイヤー枠を追加';
     }
 
     function shuffleArray(array) {
@@ -660,7 +716,7 @@
       });
 
       if (hasEmpty) {
-        showError('参加者名と席名の両方を入力してください。');
+        showError('参加者名と指定席の両方を入力してください。');
         return;
       }
 
@@ -713,44 +769,44 @@
       const grid = document.getElementById('boxGrid');
       grid.innerHTML = '';
 
-      const animals = shuffleArray(ANIMAL_POOL).slice(0, count);
+      const cards = shuffleArray(CASINO_POOL).slice(0, count);
 
       for (let i = 0; i < count; i++) {
-        const animal = animals[i % animals.length];
-        const box = document.createElement('div');
-        box.className = 'animal-box disabled';
-        box.id = `box-${i}`;
-        box.dataset.index = i;
-        box.dataset.animalIcon = animal.icon;
-        box.dataset.animalName = animal.name;
+        const cardItem = cards[i % cards.length];
+        const card = document.createElement('div');
+        card.className = 'casino-card disabled';
+        card.id = `box-${i}`;
+        card.dataset.index = i;
+        card.dataset.cardIcon = cardItem.icon;
+        card.dataset.cardName = cardItem.name;
 
-        box.innerHTML = `
-          <div class="animal-icon">${animal.icon}</div>
-          <div class="animal-name">${animal.name}</div>
+        card.innerHTML = `
+          <div class="card-icon">${cardItem.icon}</div>
+          <div class="card-name">${cardItem.name}</div>
         `;
 
-        box.onclick = () => openBox(i);
-        grid.appendChild(box);
+        card.onclick = () => openBox(i);
+        grid.appendChild(card);
       }
     }
 
     function updateBoxState() {
-      const boxes = document.querySelectorAll('.animal-box');
-      boxes.forEach(box => {
-        if (!box.classList.contains('opened')) {
+      const cards = document.querySelectorAll('.casino-card');
+      cards.forEach(card => {
+        if (!card.classList.contains('opened')) {
           if (lotteryData.selectedMember) {
-            box.classList.remove('disabled');
+            card.classList.remove('disabled');
           } else {
-            box.classList.add('disabled');
+            card.classList.add('disabled');
           }
         }
       });
     }
 
     function openBox(index) {
-      const box = document.getElementById(`box-${index}`);
+      const card = document.getElementById(`box-${index}`);
 
-      if (box.classList.contains('opened') || !lotteryData.selectedMember) {
+      if (card.classList.contains('opened') || !lotteryData.selectedMember) {
         if (!lotteryData.selectedMember) {
           showError('先にあなたの名前を選択してください！');
         }
@@ -761,25 +817,24 @@
 
       const member = lotteryData.selectedMember;
       const seat = lotteryData.shuffledSeats[lotteryData.assigned.length];
-      const animalIcon = box.dataset.animalIcon;
+      const cardIcon = card.dataset.cardIcon;
 
-      // ランダムでキャッチコピーを選択して記録
       const tagline = TAGLINES[Math.floor(Math.random() * TAGLINES.length)];
 
-      lotteryData.assigned.push({ member, seat, animalIcon, tagline });
+      lotteryData.assigned.push({ member, seat, cardIcon, tagline });
       lotteryData.members = lotteryData.members.filter(m => m !== member);
       lotteryData.selectedMember = null;
 
-      box.classList.remove('disabled');
-      box.classList.add('opened');
-      box.innerHTML = `
+      card.classList.remove('disabled');
+      card.classList.add('opened');
+      card.innerHTML = `
         <div class="box-result">
-          <div class="res-seat">${animalIcon} ${seat}</div>
+          <div class="res-seat">${cardIcon} ${seat}</div>
           <div class="res-member">${member}</div>
         </div>
       `;
 
-      showSmashOverlay(tagline, member, seat, animalIcon);
+      showSmashOverlay(tagline, member, seat, cardIcon);
 
       renderChips();
       updateBoxState();
@@ -819,9 +874,10 @@
     function fireConfetti() {
       if (typeof confetti === 'function') {
         confetti({
-          particleCount: 100,
-          spread: 80,
-          origin: { y: 0.5 }
+          particleCount: 120,
+          spread: 90,
+          origin: { y: 0.5 },
+          colors: ['#f59e0b', '#fef08a', '#ffffff', '#10b981']
         });
       }
     }
@@ -836,7 +892,7 @@
         card.className = 'summary-card';
         card.innerHTML = `
           <div class="summary-tagline">〜 ${item.tagline} 〜</div>
-          <div class="summary-seat">${item.animalIcon} ${item.seat}</div>
+          <div class="summary-seat">${item.cardIcon} ${item.seat}</div>
           <div class="summary-member">${item.member}</div>
         `;
         summaryGrid.appendChild(card);
@@ -846,22 +902,26 @@
 
       setTimeout(() => {
         if (typeof confetti === 'function') {
-          confetti({ particleCount: 180, spread: 100, origin: { y: 0.4 } });
+          confetti({
+            particleCount: 200,
+            spread: 120,
+            origin: { y: 0.4 },
+            colors: ['#f59e0b', '#fef08a', '#ffffff', '#38bdf8']
+          });
         }
       }, 500);
     }
 
-    // 結果画面をPNG画像としてダウンロード保存する機能
     function downloadResultImage() {
       const captureArea = document.getElementById('captureArea');
       
       if (typeof html2canvas === 'function') {
         html2canvas(captureArea, {
-          backgroundColor: '#ffffff',
-          scale: 2 // 高解像度出力
+          backgroundColor: '#090d16',
+          scale: 2
         }).then(canvas => {
           const link = document.createElement('a');
-          link.download = `座席決め結果_${new Date().toISOString().slice(0, 10)}.png`;
+          link.download = `VIP座席決定結果_${new Date().toISOString().slice(0, 10)}.png`;
           link.href = canvas.toDataURL('image/png');
           link.click();
         });
