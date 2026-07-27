@@ -12,6 +12,8 @@
       --card-bg: #ffffff;
       --text: #1e293b;
       --border: #e2e8f0;
+      --error-bg: #fef2f2;
+      --error-text: #dc2626;
     }
 
     body {
@@ -26,7 +28,7 @@
 
     .container {
       width: 100%;
-      max-width: 600px;
+      max-width: 640px;
       background: var(--card-bg);
       padding: 32px;
       border-radius: 16px;
@@ -41,35 +43,52 @@
       color: var(--primary);
     }
 
-    .form-group {
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
       margin-bottom: 20px;
     }
 
+    @media (max-width: 500px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
     label {
-      display: block;
       font-weight: 600;
       margin-bottom: 8px;
       font-size: 0.9rem;
     }
 
-    textarea, input {
+    .hint {
+      font-size: 0.75rem;
+      color: #64748b;
+      font-weight: normal;
+    }
+
+    textarea {
       width: 100%;
+      height: 160px;
       padding: 12px;
       border: 1px solid var(--border);
       border-radius: 8px;
       box-sizing: border-box;
-      font-size: 1rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      resize: vertical;
       transition: border-color 0.2s;
     }
 
-    textarea:focus, input:focus {
+    textarea:focus {
       outline: none;
       border-color: var(--primary);
-    }
-
-    textarea {
-      height: 120px;
-      resize: vertical;
     }
 
     button {
@@ -89,16 +108,32 @@
       background-color: var(--primary-hover);
     }
 
+    .error-message {
+      display: none;
+      background-color: var(--error-bg);
+      color: var(--error-text);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
     .result-section {
       margin-top: 32px;
       display: none;
     }
 
+    .result-section h2 {
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
     .result-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 12px;
-      margin-top: 16px;
     }
 
     .seat-card {
@@ -110,11 +145,11 @@
       animation: fadeIn 0.3s ease-out;
     }
 
-    .seat-number {
-      font-size: 0.8rem;
-      color: #64748b;
+    .seat-name {
+      font-size: 0.85rem;
+      color: var(--primary);
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .member-name {
@@ -133,60 +168,102 @@
   <div class="container">
     <h1>🎲 座席決めくじ引き</h1>
 
-    <div class="form-group">
-      <label for="names">参加者の名前（改行またはカンマ区切り）</label>
-      <textarea id="names" placeholder="佐藤&#10;鈴木&#10;高橋&#10;田中"></textarea>
-    </div>
+    <div id="errorBox" class="error-message"></div>
 
-    <div class="form-group">
-      <label for="seatPrefix">座席の表記スタイル</label>
-      <input type="text" id="seatPrefix" value="席" placeholder="例: 席, 卓, 番">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="members">
+          参加者の名前
+          <span class="hint">（改行またはカンマ区切り）</span>
+        </label>
+        <textarea id="members" placeholder="佐藤&#10;鈴木&#10;高橋&#10;田中"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="seats">
+          席の名前 / 席番号
+          <span class="hint">（改行またはカンマ区切り）</span>
+        </label>
+        <textarea id="seats" placeholder="A卓-1&#10;A卓-2&#10;B卓-1&#10;B卓-2"></textarea>
+      </div>
     </div>
 
     <button onclick="drawSeats()">くじを引く！</button>
 
     <div class="result-section" id="resultSection">
-      <h2>抽選結果</h2>
+      <h2>🎉 抽選結果</h2>
       <div class="result-grid" id="resultGrid"></div>
     </div>
   </div>
 
   <script>
+    // 配列をシャッフルする関数（フィッシャー–イェーツ）
     function shuffleArray(array) {
-      for (let i = array.length - 1; i > 0; i--) {
+      const result = [...array];
+      for (let i = result.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [result[i], result[j]] = [result[j], result[i]];
       }
-      return array;
+      return result;
+    }
+
+    // 入力文字列を整理して配列にする関数
+    function parseInput(text) {
+      return text
+        .split(/[\n,]/)
+        .map(item => item.trim())
+        .filter(item => item.length > 0);
+    }
+
+    function showError(message) {
+      const errorBox = document.getElementById('errorBox');
+      errorBox.textContent = message;
+      errorBox.style.display = 'block';
+      document.getElementById('resultSection').style.display = 'none';
+    }
+
+    function hideError() {
+      document.getElementById('errorBox').style.display = 'none';
     }
 
     function drawSeats() {
-      const input = document.getElementById('names').value;
-      const prefix = document.getElementById('seatPrefix').value.trim() || '席';
-      
-      // 改行およびカンマで分割し、空白を除去
-      const members = input
-        .split(/[\n,]/)
-        .map(name => name.trim())
-        .filter(name => name.length > 0);
+      hideError();
 
+      const memberInput = document.getElementById('members').value;
+      const seatInput = document.getElementById('seats').value;
+
+      const members = parseInput(memberInput);
+      const seats = parseInput(seatInput);
+
+      // バリデーション
       if (members.length === 0) {
-        alert('参加者の名前を入力してください。');
+        showError('参加者の名前を入力してください。');
         return;
       }
 
-      // ランダムシャッフル（フィッシャー–イェーツのシャッフル）
-      const shuffled = shuffleArray([...members]);
+      if (seats.length === 0) {
+        showError('席の名前を入力してください。');
+        return;
+      }
+
+      if (members.length !== seats.length) {
+        showError(`人数と席数が一致していません。（参加者: ${members.length}人 / 席数: ${seats.length}席）`);
+        return;
+      }
+
+      // 席の順番をシャッフル（参加者とランダムに組み合わせる）
+      const shuffledSeats = shuffleArray(seats);
 
       const resultGrid = document.getElementById('resultGrid');
       resultGrid.innerHTML = '';
 
-      shuffled.forEach((name, index) => {
+      // 結果の生成
+      members.forEach((member, index) => {
         const card = document.createElement('div');
         card.className = 'seat-card';
         card.innerHTML = `
-          <div class="seat-number">${index + 1}${prefix}</div>
-          <div class="member-name">${name}</div>
+          <div class="seat-name">🪑 ${shuffledSeats[index]}</div>
+          <div class="member-name">${member}</div>
         `;
         resultGrid.appendChild(card);
       });
