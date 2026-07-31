@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VIP SEAT LOTTERY - 座席決めくじ引き</title>
+  <title>SUMMER SEAT LOTTERY - 夏の座席決めくじ引き</title>
   <!-- 紙吹雪演出用ライブラリ -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <!-- HTML要素を画像化してダウンロードするライブラリ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
-      --bg-gradient: radial-gradient(circle at center, #111827 0%, #030712 100%);
-      --card-bg: #0f172a;
-      --card-inner: #1e293b;
-      --gold-primary: #f59e0b;
-      --gold-light: #fef08a;
-      --gold-gradient: linear-gradient(135deg, #fef08a 0%, #d97706 50%, #b45309 100%);
-      --gold-border: linear-gradient(135deg, #fde047, #b45309);
-      --red-accent: #ef4444;
+      --bg-gradient: linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #0f172a 100%);
+      --card-bg: rgba(15, 23, 42, 0.85);
+      --card-inner: rgba(255, 255, 255, 0.08);
+      --summer-orange: #f97316;
+      --summer-yellow: #fde047;
+      --summer-cyan: #38bdf8;
+      --summer-gradient: linear-gradient(135deg, #fde047 0%, #f97316 100%);
+      --danger: #ef4444;
       --text-light: #f8fafc;
       --text-muted: #94a3b8;
-      --border-dark: #334155;
+      --border-light: rgba(56, 189, 248, 0.3);
     }
 
     body {
@@ -39,12 +39,12 @@
     .container {
       width: 100%;
       max-width: 680px;
-      background: rgba(15, 23, 42, 0.85);
+      background: var(--card-bg);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(217, 119, 6, 0.3);
+      border: 1px solid var(--border-light);
       padding: 32px 24px;
-      border-radius: 20px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(217, 119, 6, 0.15);
+      border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(2, 132, 199, 0.3), 0 0 20px rgba(56, 189, 248, 0.2);
       box-sizing: border-box;
     }
 
@@ -53,22 +53,22 @@
       margin-top: 0;
       margin-bottom: 8px;
       text-align: center;
-      background: var(--gold-gradient);
+      background: var(--summer-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      font-weight: 800;
-      letter-spacing: 2px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
     }
 
     .subtitle {
       text-align: center;
-      color: var(--gold-light);
+      color: var(--summer-cyan);
       font-size: 0.9rem;
       margin-top: 0;
       margin-bottom: 28px;
       letter-spacing: 1px;
-      opacity: 0.9;
+      font-weight: 600;
     }
 
     /* 入力フェーズのスタイル */
@@ -79,7 +79,7 @@
       margin-bottom: 12px;
       font-weight: 600;
       font-size: 0.85rem;
-      color: var(--gold-light);
+      color: var(--summer-yellow);
     }
 
     .row-header {
@@ -114,8 +114,8 @@
       width: 100%;
       padding: 12px 14px;
       background: var(--card-inner);
-      border: 1px solid var(--border-dark);
-      border-radius: 10px;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
       color: #ffffff;
       box-sizing: border-box;
       font-size: 0.95rem;
@@ -124,15 +124,15 @@
 
     input[type="text"]:focus {
       outline: none;
-      border-color: var(--gold-primary);
-      box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+      border-color: var(--summer-cyan);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
     }
 
     .btn-remove {
       background: transparent;
-      color: var(--red-accent);
-      border: 1px solid var(--red-accent);
-      border-radius: 10px;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+      border-radius: 12px;
       width: 42px;
       height: 42px;
       font-size: 1.2rem;
@@ -144,18 +144,18 @@
     }
 
     .btn-remove:hover {
-      background: var(--red-accent);
+      background: var(--danger);
       color: white;
       box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
     }
 
     .btn-add {
       width: 100%;
-      background: rgba(30, 41, 59, 0.6);
-      color: var(--gold-light);
-      border: 1px dashed var(--gold-primary);
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--summer-cyan);
+      border: 1px dashed var(--summer-cyan);
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
@@ -164,37 +164,37 @@
     }
 
     .btn-add:hover {
-      background: rgba(245, 158, 11, 0.1);
+      background: rgba(56, 189, 248, 0.2);
       border-style: solid;
     }
 
     .btn-submit {
       width: 100%;
-      background: var(--gold-gradient);
-      color: #000000;
+      background: var(--summer-gradient);
+      color: #0f172a;
       border: none;
       padding: 16px;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 1.05rem;
-      font-weight: 800;
+      font-weight: 900;
       cursor: pointer;
       letter-spacing: 1px;
-      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
       transition: all 0.2s;
     }
 
     .btn-submit:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
+      box-shadow: 0 6px 20px rgba(249, 115, 22, 0.6);
     }
 
     .error-message {
       display: none;
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid var(--red-accent);
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid var(--danger);
       color: #fca5a5;
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 12px;
       margin-bottom: 20px;
       font-size: 0.9rem;
       text-align: center;
@@ -208,7 +208,7 @@
     .section-title {
       font-size: 0.9rem;
       font-weight: 700;
-      color: var(--gold-light);
+      color: var(--summer-yellow);
       margin-bottom: 12px;
       letter-spacing: 1px;
     }
@@ -223,7 +223,7 @@
     .chip {
       padding: 10px 18px;
       background: var(--card-inner);
-      border: 1px solid var(--border-dark);
+      border: 1px solid var(--border-light);
       border-radius: 25px;
       font-size: 0.95rem;
       font-weight: 600;
@@ -233,22 +233,22 @@
     }
 
     .chip:hover {
-      border-color: var(--gold-primary);
-      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+      border-color: var(--summer-cyan);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
     }
 
     .chip.selected {
-      background: var(--gold-gradient);
-      color: #000;
-      border-color: var(--gold-light);
+      background: var(--summer-gradient);
+      color: #0f172a;
+      border-color: var(--summer-yellow);
       font-weight: 800;
-      box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+      box-shadow: 0 0 15px rgba(249, 115, 22, 0.6);
     }
 
     .chip.done {
-      background: #090d16;
+      background: rgba(15, 23, 42, 0.6);
       color: #475569;
-      border-color: #1e293b;
+      border-color: rgba(255, 255, 255, 0.05);
       cursor: not-allowed;
       text-decoration: line-through;
     }
@@ -260,67 +260,55 @@
       margin-bottom: 28px;
     }
 
-    /* カジノスタイル・カードデザイン */
-    .casino-card {
+    /* サマー・リゾートカードデザイン */
+    .summer-card {
       aspect-ratio: 0.85;
-      background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      border-radius: 12px;
+      background: linear-gradient(145deg, rgba(56, 189, 248, 0.15) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       user-select: none;
       position: relative;
       overflow: hidden;
     }
 
-    .casino-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      border-radius: 12px;
-      padding: 1px;
-      background: linear-gradient(135deg, rgba(254, 240, 138, 0.4), transparent);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
-    }
-
-    .casino-card:hover:not(.opened):not(.disabled) {
+    .summer-card:hover:not(.opened):not(.disabled) {
       transform: translateY(-6px) scale(1.02);
-      border-color: var(--gold-primary);
-      box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+      border-color: var(--summer-yellow);
+      box-shadow: 0 10px 25px rgba(253, 224, 71, 0.3);
+      background: linear-gradient(145deg, rgba(253, 224, 71, 0.2) 0%, rgba(15, 23, 42, 0.6) 100%);
     }
 
-    .casino-card.disabled {
+    .summer-card.disabled {
       opacity: 0.4;
       cursor: not-allowed;
     }
 
-    .casino-card.opened {
-      background: linear-gradient(145deg, #064e3b 0%, #022c22 100%);
-      border-color: #10b981;
+    .summer-card.opened {
+      background: linear-gradient(145deg, rgba(16, 185, 129, 0.2) 0%, rgba(6, 78, 59, 0.8) 100%);
+      border-color: #34d399;
       cursor: default;
       animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+      box-shadow: 0 0 15px rgba(52, 211, 153, 0.4);
     }
 
     .card-icon {
-      font-size: 2.2rem;
+      font-size: 2.3rem;
       margin-bottom: 6px;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
     }
 
     .card-name {
       font-size: 0.78rem;
       font-weight: 700;
-      color: var(--gold-light);
-      letter-spacing: 1px;
+      color: var(--summer-cyan);
+      letter-spacing: 0.5px;
     }
 
     .box-result {
@@ -347,16 +335,16 @@
       display: none;
       margin-top: 36px;
       padding-top: 28px;
-      border-top: 1px solid rgba(245, 158, 11, 0.3);
+      border-top: 1px solid var(--border-light);
     }
 
     .summary-capture-area {
-      background: #090d16;
+      background: #07111e;
       padding: 24px;
-      border-radius: 16px;
-      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 20px;
+      border: 1px solid var(--border-light);
       margin-bottom: 24px;
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
     }
 
     .summary-grid {
@@ -367,16 +355,16 @@
 
     .summary-card {
       background: var(--card-inner);
-      border: 1px solid var(--border-dark);
+      border: 1px solid var(--border-light);
       padding: 14px 10px;
-      border-radius: 10px;
+      border-radius: 12px;
       text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
     .summary-tagline {
       font-size: 0.72rem;
-      color: var(--gold-primary);
+      color: var(--summer-yellow);
       font-weight: 800;
       margin-bottom: 6px;
       letter-spacing: 0.5px;
@@ -387,7 +375,7 @@
 
     .summary-seat {
       font-size: 0.9rem;
-      color: #38bdf8;
+      color: var(--summer-cyan);
       font-weight: 700;
     }
 
@@ -405,30 +393,30 @@
     }
 
     .btn-download {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
       color: white;
       border: none;
       padding: 14px;
-      border-radius: 10px;
+      border-radius: 12px;
       width: 100%;
       font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
       transition: all 0.2s;
     }
 
     .btn-download:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.6);
     }
 
     .btn-reset {
-      background: rgba(51, 65, 85, 0.8);
+      background: rgba(255, 255, 255, 0.1);
       color: var(--text-muted);
-      border: 1px solid var(--border-dark);
+      border: 1px solid var(--border-light);
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 12px;
       width: 100%;
       font-size: 0.95rem;
       font-weight: 600;
@@ -437,7 +425,7 @@
     }
 
     .btn-reset:hover {
-      background: #475569;
+      background: rgba(255, 255, 255, 0.2);
       color: #ffffff;
     }
 
@@ -462,11 +450,11 @@
       left: 0;
       width: 100%;
       transform: translateY(-50%) rotate(-3deg) scale(0);
-      background: linear-gradient(90deg, #090d16 0%, #b45309 30%, #f59e0b 50%, #b45309 70%, #090d16 100%);
-      border-top: 4px solid var(--gold-light);
-      border-bottom: 4px solid var(--gold-light);
+      background: linear-gradient(90deg, #07111e 0%, #ea580c 30%, #fde047 50%, #ea580c 70%, #07111e 100%);
+      border-top: 4px solid var(--summer-yellow);
+      border-bottom: 4px solid var(--summer-yellow);
       padding: 32px 20px;
-      box-shadow: 0 0 60px rgba(245, 158, 11, 0.8);
+      box-shadow: 0 0 60px rgba(249, 115, 22, 0.8);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -495,7 +483,7 @@
     .smash-name {
       font-size: 2.8rem;
       font-weight: 900;
-      color: var(--gold-light);
+      color: var(--summer-yellow);
       text-shadow: 4px 4px 0px #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
       letter-spacing: 2px;
       margin-bottom: 14px;
@@ -532,8 +520,8 @@
 <body>
 
   <div class="container">
-    <h1>♠️ VIP SEAT LOTTERY ♣️</h1>
-    <div class="subtitle">カジノスタイルの座席決め抽選</div>
+    <h1>🌴 SUMMER SEAT LOTTERY 🌊</h1>
+    <div class="subtitle">真夏の座席決めくじ引き</div>
 
     <div id="errorBox" class="error-message"></div>
 
@@ -552,24 +540,24 @@
 
       <div class="input-list" id="inputList"></div>
 
-      <button type="button" class="btn-add" id="btnAdd" onclick="addRow()">＋ プレイヤー枠を追加</button>
-      <button type="button" class="btn-submit" onclick="startLottery()">GAME START - くじ引き開始</button>
+      <button type="button" class="btn-add" id="btnAdd" onclick="addRow()">＋ 参加者枠を追加</button>
+      <button type="button" class="btn-submit" onclick="startLottery()">START - くじ引き開始！</button>
     </div>
 
     <!-- フェーズ2: くじ引き実行画面 -->
     <div id="lotteryPhase">
-      <div class="subtitle">プレイヤー名を選択し、運命のカジノカードを選んでください</div>
+      <div class="subtitle">名前を選択して、お好きな夏のアイテムカードをタップ！</div>
 
-      <div class="section-title">1. SELECT PLAYER</div>
+      <div class="section-title">1. SELECT MEMBER</div>
       <div class="member-chips" id="memberChips"></div>
 
-      <div class="section-title">2. SELECT CARD</div>
+      <div class="section-title">2. SELECT SUMMER CARD</div>
       <div class="box-grid" id="boxGrid"></div>
 
       <!-- 全員終了後の結果まとめ -->
       <div id="summarySection">
         <div class="summary-capture-area" id="captureArea">
-          <h1 style="font-size: 1.3rem; margin: 0 0 18px 0; text-align: center;">♦️ FINAL RESULT LIST ♦️</h1>
+          <h1 style="font-size: 1.3rem; margin: 0 0 18px 0; text-align: center;">🍉 SUMMER RESULT LIST 🎆</h1>
           <div class="summary-grid" id="summaryGrid"></div>
         </div>
 
@@ -586,7 +574,7 @@
     <div class="smash-banner">
       <div class="smash-tagline" id="smashTagline">〜 疾風怒濤の戦略家 〜</div>
       <div class="smash-name" id="smashName">佐藤 参戦！！</div>
-      <div class="smash-seat-badge" id="smashSeat">♠️ A卓-1</div>
+      <div class="smash-seat-badge" id="smashSeat">🍧 A卓-1</div>
     </div>
     <div class="smash-hint">画面をタップして閉じる</div>
   </div>
@@ -607,18 +595,18 @@
       "時代を創る挑戦者", "常勝無敗のビジョン", "輝きを解き放つ者", "最強のムードメーカー", "栄光への道標"
     ];
 
-    // カジノテーマ・モチーフアイコン群
-    const CASINO_POOL = [
-      { icon: '♠️', name: 'SPADE' },    { icon: '♥️', name: 'HEART' },
-      { icon: '♦️', name: 'DIAMOND' },  { icon: '♣️', name: 'CLUB' },
-      { icon: '🎰', name: 'SLOT' },     { icon: '🎲', name: 'DICE' },
-      { icon: '🪙', name: 'COIN' },     { icon: '🃏', name: 'JOKER' },
-      { icon: '👑', name: 'CROWN' },    { icon: '💎', name: 'GEM' },
-      { icon: '🏆', name: 'TROPHY' },   { icon: '🔑', name: 'VIP KEY' },
-      { icon: '🌟', name: 'STAR' },     { icon: '🔥', name: 'FLAME' },
-      { icon: '🎯', name: 'TARGET' },   { icon: '⚡', name: 'LIGHTNING' },
-      { icon: '🍾', name: 'CHAMPAGNE'}, { icon: '🎁', name: 'BOX' },
-      { icon: '⚜️', name: 'HERALD' },   { icon: '🔔', name: 'BELL' }
+    // 夏テーマ・モチーフアイコン群
+    const SUMMER_POOL = [
+      { icon: '🍧', name: 'かき氷' },    { icon: '🍉', name: 'スイカ' },
+      { icon: '🎆', name: '花火' },      { icon: '🌻', name: 'ひまわり' },
+      { icon: '🌊', name: 'ビッグウェーブ' },{ icon: '🏝️', name: '南の島' },
+      { icon: '🍦', name: 'ソフトクリーム' },{ icon: '🦩', name: 'フラミンゴ' },
+      { icon: '🐬', name: 'イルカ' },    { icon: '🪼', name: 'クラゲ' },
+      { icon: '🪸', name: 'サンゴ' },    { icon: '🦣', name: 'ヤシの木' },
+      { icon: '👒', name: '麦わら帽子' },{ icon: '🕶️', name: 'サングラス' },
+      { icon: '🪀', name: 'ヨーヨー' },  { icon: '🍍', name: 'パイナップル' },
+      { icon: '🥭', name: 'マンゴー' },  { icon: '🫧', name: 'シャボン玉' },
+      { icon: '⛵', name: 'ヨット' },    { icon: '🏄', name: 'サーフィン' }
     ];
 
     let lotteryData = {
@@ -670,7 +658,7 @@
       document.getElementById('countDisplay').textContent = `${count} / ${MAX_ROWS}枠`;
       const btnAdd = document.getElementById('btnAdd');
       btnAdd.disabled = count >= MAX_ROWS;
-      btnAdd.textContent = count >= MAX_ROWS ? '最大件数（20枠）に達しました' : '＋ プレイヤー枠を追加';
+      btnAdd.textContent = count >= MAX_ROWS ? '最大件数（20枠）に達しました' : '＋ 参加者枠を追加';
     }
 
     function shuffleArray(array) {
@@ -769,12 +757,12 @@
       const grid = document.getElementById('boxGrid');
       grid.innerHTML = '';
 
-      const cards = shuffleArray(CASINO_POOL).slice(0, count);
+      const cards = shuffleArray(SUMMER_POOL).slice(0, count);
 
       for (let i = 0; i < count; i++) {
         const cardItem = cards[i % cards.length];
         const card = document.createElement('div');
-        card.className = 'casino-card disabled';
+        card.className = 'summer-card disabled';
         card.id = `box-${i}`;
         card.dataset.index = i;
         card.dataset.cardIcon = cardItem.icon;
@@ -791,7 +779,7 @@
     }
 
     function updateBoxState() {
-      const cards = document.querySelectorAll('.casino-card');
+      const cards = document.querySelectorAll('.summer-card');
       cards.forEach(card => {
         if (!card.classList.contains('opened')) {
           if (lotteryData.selectedMember) {
@@ -877,7 +865,7 @@
           particleCount: 120,
           spread: 90,
           origin: { y: 0.5 },
-          colors: ['#f59e0b', '#fef08a', '#ffffff', '#10b981']
+          colors: ['#38bdf8', '#fde047', '#f97316', '#ffffff']
         });
       }
     }
@@ -906,7 +894,7 @@
             particleCount: 200,
             spread: 120,
             origin: { y: 0.4 },
-            colors: ['#f59e0b', '#fef08a', '#ffffff', '#38bdf8']
+            colors: ['#38bdf8', '#fde047', '#f97316', '#34d399']
           });
         }
       }, 500);
@@ -917,11 +905,11 @@
       
       if (typeof html2canvas === 'function') {
         html2canvas(captureArea, {
-          backgroundColor: '#090d16',
+          backgroundColor: '#07111e',
           scale: 2
         }).then(canvas => {
           const link = document.createElement('a');
-          link.download = `VIP座席決定結果_${new Date().toISOString().slice(0, 10)}.png`;
+          link.download = `SUMMER座席決定結果_${new Date().toISOString().slice(0, 10)}.png`;
           link.href = canvas.toDataURL('image/png');
           link.click();
         });
